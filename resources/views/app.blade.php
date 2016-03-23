@@ -8,12 +8,12 @@
 </head>
 <body>
 @include('layout.navigation')
-<div class='container'>
+<div id='container'>
   @yield('content')
-  @include('layout.footer')
 </div> <!-- end of container -->
+{{--@include('layout.footer')--}}
 <script src='//code.jquery.com/jquery.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.min.js'></script>
-{{--<script src='{{ URL::asset('/js/min/all.js') }}'></script>--}}
+<script src='/js/min/all.js'></script>
 </body>
 </html>
