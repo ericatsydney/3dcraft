@@ -14,7 +14,8 @@
 {{--@include('layout.footer')--}}
 <script src='//code.jquery.com/jquery.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.min.js'></script>
-<script src='/js/min/OrbitControls.js'></script>
+<script src='/js/OrbitControls.js'></script>
+<script src='/js/STLLoader.js'></script>
 <script src='/js/min/all.js'></script>
 </body>
 </html>
