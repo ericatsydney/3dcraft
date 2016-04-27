@@ -1,3 +1,8 @@
+/**
+ * @file
+ * This file is for the camera, mesh and scene setup and rendering.
+ *
+ */
 (function($, window, document){
   THREED_CRAFT = window.THREED_CRAFT || {};
 
@@ -47,22 +52,22 @@
     orbitControl: function() {
       // Add OrbitControls so that we can pan around with the mouse.
       controls = new THREE.OrbitControls(camera, renderer.domElement);
-      //controls.addEventListener( 'change', render ); // add this only if there is no animation loop (requestAnimationFrame)
-      //controls.enableRotate = false;
+      // PI = 180 degree, and PI/2 = 90 degree.
+      controls.maxPolarAngle = Math.PI/2; // radians
       controls.update();
+
     },
 
     loadMeshFromSTL: function() {
       // ASCII file
       var loader = new THREE.STLLoader();
-      //loader.load('../models/stl/ascii/slotted_disk.stl', function (geometry) {
+      //loader.load('../models/stl/ascii/balanced_die.stl', function (geometry) {
       loader.load('../models/stl/ascii/FantasyMorek.stl', function (geometry) {
 
         var material = new THREE.MeshPhongMaterial({color: 0xfefefe, specular: 0x111111, shininess: 200});
         mesh = new THREE.Mesh(geometry, material);
 
         mesh.position.set(0, 0, 0);
-        //mesh.scale.set(0.5, 0.5, 0.5);
 
         mesh.castShadow = true;
         mesh.receiveShadow = true;
@@ -110,36 +115,24 @@
       scene = new THREE.Scene();
       // Set camera.
       camera = new THREE.PerspectiveCamera( 60, aspect, 1, 1000000 );
-      camera.position.set(0,-30,40);
-      camera.lookAt( scene.position );
+      camera.position.set(0,-40,50);
+
+      // We need to set the camera up so that the camera will rotate around z-axis.
+      camera.up.set( 0, 0, 1 );
+      camera.lookAt( 0, 0, 10 );
+
       // Load Object from STL file.
       THREED_CRAFT.threeRender.loadMeshFromSTL();
       // Set lighting.
       THREED_CRAFT.threeRender.setLighting();
-      //orbitControl();
       // Set ground.
       THREED_CRAFT.threeRender.addGround();
       // Set XYZ Axis.
-      THREED_CRAFT.threeRender.drawXYZAxis();
+      //THREED_CRAFT.threeRender.drawXYZAxis();
       // Make it resizable.
       THREED_CRAFT.threeRender.resizeWindow();
       // Define the drag/draw behaviours.
-      var element = $("#container");
-      element.on('mousedown',function(event) {
-        THREED_CRAFT.threeRender.startX = event.pageX;
-        element.on('mousemove',function(event) {
-          event.preventDefault();
-          THREED_CRAFT.threeRender.x = event.pageX - THREED_CRAFT.threeRender.startX + THREED_CRAFT.threeRender.lastX;
-          var rotation = THREED_CRAFT.threeRender.x*0.001;
-          mesh.geometry.rotateZ(Math.sin(rotation));
-          THREED_CRAFT.threeRender.render();
-        });
-      });
-      element.on('mouseup',function(event) {
-        THREED_CRAFT.threeRender.lastX = THREED_CRAFT.threeRender.x;
-        element.unbind('mousemove');
-
-      });
+      THREED_CRAFT.threeRender.orbitControl();
     },
 
     render: function() {
@@ -149,7 +142,6 @@
   };
 
   $(document).ready(function() {
-    console.log('test');
     THREED_CRAFT.threeRender.init();
     THREED_CRAFT.threeRender.render();
   });
