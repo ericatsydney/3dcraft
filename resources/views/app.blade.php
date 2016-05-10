@@ -5,6 +5,7 @@
   <title>3dcraft</title>
   <link href='/css/app.css' rel='stylesheet'>
   <link href='/css/bootstrap.min.css' rel='stylesheet'/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">
 </head>
 <body>
 @include('layout.navigation')
