@@ -24,18 +24,6 @@
 <script src="https://fb.me/react-0.13.3.js"></script>
 <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-{{--<script src="/js/min/react.js"></script>--}}
-<script type="text/jsx">
-  var HelloWorld = React.createClass({
-    render: function(){
-      return (
-          <div className="panel panel-primary">
-            Control Panel
-          </div>
-      );
-    }
-  });
-  React.render(<HelloWorld />, document.getElementById('myDiv'));
-</script>
+<script type="text/jsx" src="/js/min/react.js"></script>
 </body>
 </html>
