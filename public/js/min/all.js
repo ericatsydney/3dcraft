@@ -7,6 +7,9 @@
   THREED_CRAFT = window.THREED_CRAFT || {};
 
   THREED_CRAFT.threeRender = {
+    setting: {
+      enableAxis: false
+    },
     startX:0,
     x: 0,
     lastX: 0,
@@ -16,6 +19,10 @@
     controls: {},
     mesh: {},
     center: new THREE.Vector3( 0, 0, 10 ),
+
+    initLocalStorage: function() {
+      localStorage.setItem('enableAxis', THREED_CRAFT.threeRender.setting.enableAxis);
+    },
 
     resizeWindow: function() {
       // Create an event listener that resizes the renderer with the browser window.
@@ -127,12 +134,12 @@
       THREED_CRAFT.threeRender.setLighting();
       // Set ground.
       THREED_CRAFT.threeRender.addGround();
-      // Set XYZ Axis.
-      //THREED_CRAFT.threeRender.drawXYZAxis();
       // Make it resizable.
       THREED_CRAFT.threeRender.resizeWindow();
       // Define the drag/draw behaviours.
       THREED_CRAFT.threeRender.orbitControl();
+      // Initialize the localStorage
+      THREED_CRAFT.threeRender.initLocalStorage();
     },
 
     render: function() {
@@ -143,6 +150,14 @@
 
   $(document).ready(function() {
     THREED_CRAFT.threeRender.init();
+    THREED_CRAFT.threeRender.render();
+  });
+
+  $(window).on('storage', function(e) {
+    if (localStorage.getItem('enableAxis')) {
+      // Set XYZ Axis.
+      THREED_CRAFT.threeRender.drawXYZAxis();
+    }
     THREED_CRAFT.threeRender.render();
   });
 })(jQuery, this, this.document);
