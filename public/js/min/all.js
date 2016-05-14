@@ -151,15 +151,39 @@
   $(document).ready(function() {
     THREED_CRAFT.threeRender.init();
     THREED_CRAFT.threeRender.render();
+
+    $('#axis-control').click(function() {
+      if (JSON.parse(localStorage.getItem('enableAxis'))) {
+        localStorage.setItem('enableAxis', false);
+        THREED_CRAFT.threeRender.drawXYZAxis();
+        $('#axis-control').addClass('enable');
+      }
+      else {
+        localStorage.setItem('enableAxis', true);
+        $('#axis-control').removeClass('enable');
+      }
+      THREED_CRAFT.threeRender.render();
+    });
   });
 
+
+  // Function to observe the localStorage, once it get changes will re-render accordingly.
   $(window).on('storage', function(e) {
-    if (localStorage.getItem('enableAxis')) {
+    console.log('rerender');
+    if (JSON.parse(localStorage.getItem('enableAxis'))) {
       // Set XYZ Axis.
+
       THREED_CRAFT.threeRender.drawXYZAxis();
+      $('#axis-control').addClass('enable');
+    }
+    else {
+      conosle.log('updatebutton');
+      $('#axis-control').removeClass('enable');
     }
     THREED_CRAFT.threeRender.render();
   });
+
+
 })(jQuery, this, this.document);
 
 

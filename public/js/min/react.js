@@ -1,12 +1,18 @@
-var MainMenu = React.createClass({
-  render: function(){
+var AxisControl = React.createClass({
+  render: function() {
     return (
-      <ul className="nav navbar-nav navbar-right">
       <li>
-      <a href="#">
-      <i className="fa fa-envelope fa-fw"></i>
-      </a>
+        <a href="#">
+          <i className="fa fa-envelope fa-fw"></i>
+        </a>
       </li>
+    );
+  }
+});
+
+var BackgroundControl = React.createClass({
+  render: function() {
+    return (
       <li className="dropdown">
       <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
     aria-expanded="false">
@@ -20,7 +26,26 @@ var MainMenu = React.createClass({
       <li><a href="#">Separated link</a></li>
     </ul>
     </li>
-    </ul>
+    );
+  }
+});
+
+var MainMenu = React.createClass({
+  getInitialState: function() {
+    if (localStorage.getItem(enableAxis).length) {
+      if (localStorage.getItem(enableAxis)) {
+        AxisControlStatus = 'enabled';
+      }
+    }
+    return {};
+  },
+
+  render: function(){
+    return (
+      <ul className="nav navbar-nav navbar-right">
+        <AxisControl />
+        <BackgroundControl />
+      </ul>
     );
   }
 });
