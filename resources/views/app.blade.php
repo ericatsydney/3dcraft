@@ -17,7 +17,6 @@
 <div id="myDiv"></div>
 {{--@include("layout.footer")--}}
 <script src="/js/jquery.js"></script>
-<script src="/js/require.js"></script>
 <script src="/js/three.min.js"></script>
 <script src="/js/OrbitControls.js"></script>
 <script src="/js/STLLoader.js"></script>

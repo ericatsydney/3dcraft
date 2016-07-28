@@ -9,9 +9,8 @@ import React3 from 'react-three-renderer';
 import THREE from 'three';
 import ReactDOM from 'react-dom';
 
-(function($, window, document){
   
-  THREED_CRAFT = window.THREED_CRAFT || {};
+  THREED_CRAFT = {};
 
   THREED_CRAFT.threeRender = {
     setting: {
@@ -189,8 +188,4 @@ import ReactDOM from 'react-dom';
     }
     THREED_CRAFT.threeRender.render();
   });
-
-
-})(jQuery, this, this.document);
-
 
