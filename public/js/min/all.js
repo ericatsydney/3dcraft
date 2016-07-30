@@ -1,6 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -19,163 +21,95 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * @file
- * This file is for the camera, mesh and scene setup and rendering.
- *
- */
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var THREED_CRAFT = {};
-THREED_CRAFT.threeRender = {
-  setting: {
-    enableAxis: false
-  },
-  startX: 0,
-  x: 0,
-  lastX: 0,
-  scene: {},
-  camera: {},
-  renderer: {},
-  controls: {},
-  mesh: {},
-  center: new _three2.default.Vector3(0, 0, 10),
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-  initLocalStorage: function initLocalStorage() {
-    localStorage.setItem('enableAxis', THREED_CRAFT.threeRender.setting.enableAxis);
-  },
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @file
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * This file is for the camera, mesh and scene setup and rendering.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
-  resizeWindow: function resizeWindow() {
-    // Create an event listener that resizes the renderer with the browser window.
-    window.addEventListener('resize', function () {
-      var WIDTH = window.innerWidth,
-          HEIGHT = window.innerHeight;
-      camera.aspect = WIDTH / HEIGHT;
-      camera.updateProjectionMatrix();
-    });
-  },
+var Simple = function (_React$Component) {
+  _inherits(Simple, _React$Component);
 
-  drawSingleLine: function drawSingleLine(colorHex, vertice1, vertice2) {
-    var material = new _three2.default.LineBasicMaterial({
-      color: colorHex
-    });
+  function Simple(props, context) {
+    _classCallCheck(this, Simple);
 
-    var geometry = new _three2.default.Geometry();
-    geometry.vertices.push(vertice1, vertice2);
+    // construct the position vector here, because if we use 'new' within render,
+    // React will think that things have changed when they have not.
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Simple).call(this, props, context));
 
-    var line = new _three2.default.Line(geometry, material);
-    scene.add(line);
-  },
+    _this.cameraPosition = new _three2.default.Vector3(0, 0, 5);
 
-  drawXYZAxis: function drawXYZAxis() {
-    // Z Axis.
-    THREED_CRAFT.threeRender.drawSingleLine(0x0000ff, new _three2.default.Vector3(0, 0, 1000), new _three2.default.Vector3(0, 0, -1000));
-    // X Axis.
-    THREED_CRAFT.threeRender.drawSingleLine(0xff0000, new _three2.default.Vector3(1000, 0, 0), new _three2.default.Vector3(-1000, 0, 0));
-    // Y Axis.
-    THREED_CRAFT.threeRender.drawSingleLine(0x00ff00, new _three2.default.Vector3(0, 1000, 0), new _three2.default.Vector3(0, -1000, 0));
-  },
+    _this.state = {
+      cubeRotation: new _three2.default.Euler()
+    };
 
-  orbitControl: function orbitControl() {
-    // Add OrbitControls so that we can pan around with the mouse.
-    // PI = 180 degree, and PI/2 = 90 degree.
-  },
+    _this._onAnimate = function () {
+      // we will get this callback every frame
 
-  loadMeshFromSTL: function loadMeshFromSTL() {
-    // ASCII file
-    var loader = THREE.STLLoader();
-    //loader.load('../models/stl/ascii/balanced_die.stl', function (geometry) {
-    //loader.load('../models/stl/ascii/FantasyMorek.stl', function (geometry) {
-
-    //});
-  },
-
-  setLighting: function setLighting() {
-    // Create a light, set its position, and add it to the scene.
-    var light = new _three2.default.PointLight(0xffffff);
-    light.position.set(100, 100, 100);
-    var light1 = new _three2.default.PointLight(0xffffff);
-    light1.position.set(50, -100, 70);
-
-  },
-
-  addGround: function addGround() {
-    // Ground
-    var plane = new _three2.default.Mesh(new _three2.default.PlaneBufferGeometry(40, 40), new _three2.default.MeshPhongMaterial({ color: 0x999999, specular: 0x101010 }));
-    plane.position.y = -0.5;
-
-    plane.receiveShadow = true;
-  },
-
-  init: function init() {
-    var container = document.getElementById("container"),
-        width = container.clientWidth,
-        height = container.clientHeight,
-        aspect = width / height;
-
-    // Set renderer.
-    var renderer = new _three2.default.WebGLRenderer();
-    renderer.setSize(width, height);
-    container.appendChild(renderer.domElement);
-    // Set scene.
-    var scene = new _three2.default.Scene();
-    // Set camera.
-    var camera = new _three2.default.PerspectiveCamera(60, aspect, 1, 1000000);
-    camera.position.set(0, -40, 50);
-
-    // We need to set the camera up so that the camera will rotate around z-axis.
-    camera.up.set(0, 0, 1);
-    camera.lookAt(0, 0, 10);
-
-    // Load Object from STL file.
-    THREED_CRAFT.threeRender.loadMeshFromSTL();
-    // Set lighting.
-    THREED_CRAFT.threeRender.setLighting();
-    // Set ground.
-    THREED_CRAFT.threeRender.addGround();
-    // Make it resizable.
-    THREED_CRAFT.threeRender.resizeWindow();
-    // Define the drag/draw behaviours.
-    THREED_CRAFT.threeRender.orbitControl();
-    // Initialize the localStorage
-    THREED_CRAFT.threeRender.initLocalStorage();
-  },
-
-  render: function render() {
-    requestAnimationFrame(THREED_CRAFT.threeRender.render);
+      // pretend cubeRotation is immutable.
+      // this helps with updates and pure rendering.
+      // React will be sure that the rotation has now updated.
+      _this.setState({
+        cubeRotation: new _three2.default.Euler(_this.state.cubeRotation.x + 0.1, _this.state.cubeRotation.y + 0.1, 0)
+      });
+    };
+    return _this;
   }
-};
 
-$(document).ready(function () {
-  THREED_CRAFT.threeRender.init();
-  THREED_CRAFT.threeRender.render();
+  _createClass(Simple, [{
+    key: 'render',
+    value: function render() {
+      var width = window.innerWidth; // canvas width
+      var height = window.innerHeight; // canvas height
 
-  $('#axis-control').click(function () {
-    if (JSON.parse(localStorage.getItem('enableAxis'))) {
-      localStorage.setItem('enableAxis', false);
-      THREED_CRAFT.threeRender.drawXYZAxis();
-      $('#axis-control').addClass('enable');
-    } else {
-      localStorage.setItem('enableAxis', true);
-      $('#axis-control').removeClass('enable');
+      return _react2.default.createElement(
+        _reactThreeRenderer2.default,
+        {
+          mainCamera: 'camera' // this points to the perspectiveCamera which has the name set to "camera" below
+          , width: width,
+          height: height,
+
+          onAnimate: this._onAnimate
+        },
+        _react2.default.createElement(
+          'scene',
+          null,
+          _react2.default.createElement('perspectiveCamera', {
+            name: 'camera',
+            fov: 75,
+            aspect: width / height,
+            near: 0.1,
+            far: 1000,
+
+            position: this.cameraPosition
+          }),
+          _react2.default.createElement(
+            'mesh',
+            {
+              rotation: this.state.cubeRotation
+            },
+            _react2.default.createElement('boxGeometry', {
+              width: 1,
+              height: 1,
+              depth: 1
+            }),
+            _react2.default.createElement('meshBasicMaterial', {
+              color: 0xff0000
+            })
+          )
+        )
+      );
     }
-    THREED_CRAFT.threeRender.render();
-  });
-});
+  }]);
 
-// Function to observe the localStorage, once it get changes will re-render accordingly.
-$(window).on('storage', function (e) {
-  console.log('rerender');
-  if (JSON.parse(localStorage.getItem('enableAxis'))) {
-    // Set XYZ Axis.
+  return Simple;
+}(_react2.default.Component);
 
-    THREED_CRAFT.threeRender.drawXYZAxis();
-    $('#axis-control').addClass('enable');
-  } else {
-    conosle.log('updatebutton');
-    $('#axis-control').removeClass('enable');
-  }
-  THREED_CRAFT.threeRender.render();
-});
+_reactDom2.default.render(_react2.default.createElement(Simple, null), document.body);
 
 },{"react":289,"react-dom":30,"react-three-renderer":34,"three":290}],2:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
