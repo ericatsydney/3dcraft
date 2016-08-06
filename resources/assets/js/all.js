@@ -8,6 +8,8 @@ import React from 'react';
 import React3 from 'react-three-renderer';
 import THREE from 'three';
 import ReactDOM from 'react-dom';
+//import STLLoader from 'STLLoader';
+var STLLoader = require('./STLLoader');
 
 class Simple extends React.Component {
   constructor(props, context) {
@@ -16,10 +18,24 @@ class Simple extends React.Component {
     // construct the position vector here, because if we use 'new' within render,
     // React will think that things have changed when they have not.
     this.cameraPosition = new THREE.Vector3(0, 0, 5);
-
+    this.loader = new STLLoader();
+  
     this.state = {
       cubeRotation: new THREE.Euler(),
+      vertices: [
+	new THREE.Vector3( -10,  10, 0 ),
+	new THREE.Vector3( -10, -10, 0 ),
+	new THREE.Vector3(  10, -10, 0 )
+      ],
+      faces: [new THREE.Face3( 0, 1, 2 )] 
     };
+
+    this.loader.load('../models/stl/ascii/FantasyMorek.stl', function (geometry) {
+      this.setState({
+	vertices: geometry.vertices,
+        faces: geometry.faces,
+      });
+    }.bind(this));
 
     this._onAnimate = () => {
       // we will get this callback every frame
@@ -27,26 +43,28 @@ class Simple extends React.Component {
       // pretend cubeRotation is immutable.
       // this helps with updates and pure rendering.
       // React will be sure that the rotation has now updated.
-      this.setState({
-        cubeRotation: new THREE.Euler(
-          this.state.cubeRotation.x + 0.1,
-          this.state.cubeRotation.y + 0.1,
-          0
-        ),
-      });
+      // this.setState({
+      //   cubeRotation: new THREE.Euler(
+      //     this.state.cubeRotation.x + 0.1,
+      //     this.state.cubeRotation.y + 0.1,
+      //     0
+      //   ),
+      // });
     };
   }
 
   render() {
     const width = window.innerWidth; // canvas width
     const height = window.innerHeight; // canvas height
-
+    console.log('88');
+    console.log(this.state.vertices);
+    console.log('99');
+    console.log(this.state.faces);
     return (<React3
       mainCamera="camera" // this points to the perspectiveCamera which has the name set to "camera" below
       width={width}
       height={height}
 
-      onAnimate={this._onAnimate}
     >
       <scene>
         <perspectiveCamera
@@ -61,13 +79,12 @@ class Simple extends React.Component {
         <mesh
           rotation={this.state.cubeRotation}
         >
-          <boxGeometry
-            width={1}
-            height={1}
-            depth={1}
+          <geometry
+	   vertices={this.state.vertices}
+           faces={this.state.faces}
           />
           <meshBasicMaterial
-            color={0xff0000}
+            color={0x00ff00}
           />
         </mesh>
       </scene>
@@ -75,5 +92,5 @@ class Simple extends React.Component {
   }
 }
 
-ReactDOM.render(<Simple/>, document.body); 
+ReactDOM.render(<Simple/>, document.body);
 

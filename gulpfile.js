@@ -19,7 +19,8 @@ gulp.task('sass', function () {
 
 gulp.task('js', function () {
   var customOptions = {
-    entries: ['./resources/assets/js/all.js']
+    entries: ['./resources/assets/js/all.js'],
+    fast: true
   }
   var bundler = watchify(browserify(customOptions));
 

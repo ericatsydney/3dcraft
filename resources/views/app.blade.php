@@ -19,7 +19,6 @@
 <script src="/js/jquery.js"></script>
 <script src="/js/three.min.js"></script>
 <script src="/js/OrbitControls.js"></script>
-<script src="/js/STLLoader.js"></script>
 <script src="/js/min/all.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 {{--<script src="https://fb.me/react-0.13.3.js"></script>--}}
