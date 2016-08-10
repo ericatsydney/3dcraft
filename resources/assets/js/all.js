@@ -4,11 +4,11 @@
  *
  */
 
-import React from 'react';
-import React3 from 'react-three-renderer';
-import THREE from 'three';
-import ReactDOM from 'react-dom';
-//import STLLoader from 'STLLoader';
+var React = require('react');
+var React3 = require('react-three-renderer');
+var THREE = require('three');
+var ReactDOM = require('react-dom');
+//import STLLoader from './STLLoader';
 var STLLoader = require('./STLLoader');
 
 class Simple extends React.Component {

@@ -26,6 +26,7 @@
  *  var mesh = new THREE.Mesh( geometry, material );
  */
 
+var THREE = require('three');
 
 THREE.STLLoader = function ( manager ) {
 
