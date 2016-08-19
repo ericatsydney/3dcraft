@@ -22,13 +22,18 @@ var libs = [
   'three'
 ];
 
+var paths = {
+  js: ['./resources/assets/js/all.js'],
+  sass: ['./resources/assets/sass/**/*.scss'],
+}
+
 gulp.task('sass', function () {
   return gulp.src('./resources/assets/sass/**/*.scss')
     .pipe(gulp.dest('./public/css'));
 });
 
 // Build vendor's js.
-gulp.task('vendor', function() {
+gulp.task('jsvendor', function() {
   // A dummy entry point for browserify
   var stream = browserify({
       debug: false,  // Don't provide source maps for vendor libs
@@ -48,19 +53,24 @@ gulp.task('vendor', function() {
     .pipe(gulp.dest('./public/js/min'));
 });
 
-gulp.task('js', function () {
+// Build app's js (exclude the vendors).
+gulp.task('jsapp', function () {
   var customOptions = {
-    entries: ['./resources/assets/js/all.js'],
+    entries: paths.js,
     fast: true,
     bundleExternal: false
   }
-  var bundler = watchify(browserify(customOptions));
+  var stream = watchify(browserify(customOptions));
 
-  bundler.transform(babelify, {
+  stream.transform(babelify, {
     'presets': [es2015Preset, reactPreset]
   });
 
-  return bundler.bundle()
+  return stream.bundle()
     .pipe(source('all.js'))
     .pipe(gulp.dest('./public/js/min'));
+});
+
+gulp.task('jsapp:watch', function() {
+  return gulp.watch(paths.js, ['jsapp']);
 });
