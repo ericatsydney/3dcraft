@@ -13,8 +13,8 @@
 @include("layout.navigation")
 <div id="container">
   @yield("content")
+  <div id="threeApp"></div>
 </div> <!-- end of container -->
-<div id="myDiv"></div>
 {{--@include("layout.footer")--}}
 <script src="/js/jquery.js"></script>
 <!--script src="/js/OrbitControls.js"></script-->

@@ -11,7 +11,7 @@ var ReactDOM = require('react-dom');
 var STLLoader = require('./STLLoader');
 var loader = new STLLoader();
 var myMesh = null;
-
+ 
 // This is a sample using MTL and OBJ Loader
 //var OBJLoader = require('./OBJLoader');
 //var MTLLoader = require('./MTLLoader');
@@ -42,7 +42,7 @@ loader.load('../models/stl/ascii/FantasyMorek.stl', function (geometry) {
   myMesh.position.set(0, 0, 0);
   myMesh.castShadow = true;
   myMesh.receiveShadow = true;
-  ReactDOM.render(<Simple/>, document.body);
+  ReactDOM.render(<Simple/>, document.getElementById('threeApp'));
 });
 
 class Simple extends React.Component {
@@ -51,8 +51,37 @@ class Simple extends React.Component {
 
     // construct the position vector here, because if we use 'new' within render,
     // React will think that things have changed when they have not.
-    this.cameraPosition = new THREE.Vector3(0, 0, 250);
+    this.cameraPosition = new THREE.Vector3(0, -40, 50);
     this.cameraLookAt = new THREE.Vector3(0, 0, 1); 
+    this.lightPosition1 = new THREE.Vector3(100, 100, 100);
+    this.lightPosition2 = new THREE.Vector3(50, -100, 70);
+    this.lightTarget  = new THREE.Vector3(0, 0, 1); 
+    this.state = {
+      rotate: true,
+      cameraPosition: new THREE.Vector3(0, -40, 50),
+    }
+  }
+
+  _onAnimate = () => {
+    let time;
+
+    time = Date.now();
+    const newState = {
+      time
+    };
+    const timer = time * 0.0002;
+    if (this.state.rotate) {
+      newState.cameraPosition = new THREE.Vector3(
+        Math.cos(timer) * 50,
+        this.state.cameraPosition.y,
+        Math.sin(timer) * 50
+      );
+    }
+    this.setState(newState);
+  }
+ 
+  _toggleRotate = () => {
+    this.setState({ rotate: !this.state.rotate });
   }
 
   componentDidMount() {
@@ -66,13 +95,57 @@ class Simple extends React.Component {
   render() {
     const width = window.innerWidth; // canvas width
     const height = window.innerHeight; // canvas height
-    return (<React3
+    return (
+    <div class="wrapper">
+    <Info 
+      toggleRotate={this._toggleRotate}
+      rotating={this.state.rotate}
+    >
+    </Info>
+    <React3
       mainCamera="camera" // this points to the perspectiveCamera which has the name set to "camera" below
       width={width}
       height={height}
       clearColor={0xf0f0f0}
+      onAnimate={this._onAnimate}
     >
       <scene>
+	<ambientLight
+          color={0x505050}
+	/>
+	<spotLight
+          color={0xdddddd}
+          intensity={1.5}
+          position={this.lightPosition1}
+          lookAt={this.lightTarget}
+
+          castShadow
+          shadowCameraNear={200}
+          shadowCameraFar={10000}
+          shadowCameraFov={50}
+
+          shadowBias={-0.00022}
+
+          shadowMapWidth={2048}
+          shadowMapHeight={2048}
+        />
+       	<spotLight
+          color={0xdddddd}
+          intensity={1.5}
+          position={this.lightPosition2}
+          lookAt={this.lightTarget}
+
+          castShadow
+          shadowCameraNear={200}
+          shadowCameraFar={10000}
+          shadowCameraFov={50}
+
+          shadowBias={-0.00022}
+
+          shadowMapWidth={2048}
+          shadowMapHeight={2048}
+        />
+
         <perspectiveCamera
           name="camera"
           fov={45}
@@ -80,12 +153,49 @@ class Simple extends React.Component {
           near={1}
           far={2000}
 
-          position={this.cameraPosition}
-          lookAt={this.cameraLookAt}
+          position={this.state.cameraPosition}
+          lookAt={this.state.rotate ? this.cameraLookAt : null}
         />
 	<group ref='group' />
       </scene>
-    </React3>);
+    </React3>
+    </div>);
+  }
+}
+
+const { PropTypes } = React;
+
+class Info extends React.Component {
+  static propTypes = {
+    rotating: PropTypes.bool.isRequired,
+  };
+
+  render() {
+    const linkStyle = {
+      textDecoration: 'underline',
+      cursor: 'pointer',
+    };
+
+    const {
+      toggleRotate,
+      rotating,
+    } = this.props;
+
+    return (<div
+      style={{
+        textAlign: 'center',
+        padding: 10,
+        zIndex: 10,
+        width: '100%',
+        position: 'absolute',
+        color: '#000',
+      }}
+    >
+      3dcraft Demo<br/>
+      Model loaded from STL file.<br/>
+      Toggle: <a onClick={toggleRotate} style={linkStyle}>Camera{rotating ? '*' : null}</a> |
+      <br/>
+    </div>);
   }
 }
 

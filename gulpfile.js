@@ -9,6 +9,7 @@ var source = require('vinyl-source-stream');
 var changed = require('gulp-changed');
 var es2015Preset = require('babel-preset-es2015');
 var reactPreset = require('babel-preset-react');
+var stage1Preset = require('babel-preset-stage-1');
 var babel = require('gulp-babel');
 var babelify = require('babelify');
 var browserify = require('browserify');
@@ -63,7 +64,7 @@ gulp.task('jsapp', function () {
   var stream = watchify(browserify(customOptions));
 
   stream.transform(babelify, {
-    'presets': [es2015Preset, reactPreset]
+    'presets': [es2015Preset, reactPreset, stage1Preset]
   });
 
   return stream.bundle()

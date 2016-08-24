@@ -53,7 +53,7 @@ loader.load('../models/stl/ascii/FantasyMorek.stl', function (geometry) {
   myMesh.position.set(0, 0, 0);
   myMesh.castShadow = true;
   myMesh.receiveShadow = true;
-  ReactDOM.render(React.createElement(Simple, null), document.body);
+  ReactDOM.render(React.createElement(Simple, null), document.getElementById('threeApp'));
 });
 
 var Simple = function (_React$Component) {
@@ -66,8 +66,33 @@ var Simple = function (_React$Component) {
     // React will think that things have changed when they have not.
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Simple).call(this, props, context));
 
-    _this.cameraPosition = new THREE.Vector3(0, 0, 250);
+    _this._onAnimate = function () {
+      var time = void 0;
+
+      time = Date.now();
+      var newState = {
+        time: time
+      };
+      var timer = time * 0.0002;
+      if (_this.state.rotate) {
+        newState.cameraPosition = new THREE.Vector3(Math.cos(timer) * 50, _this.state.cameraPosition.y, Math.sin(timer) * 50);
+      }
+      _this.setState(newState);
+    };
+
+    _this._toggleRotate = function () {
+      _this.setState({ rotate: !_this.state.rotate });
+    };
+
+    _this.cameraPosition = new THREE.Vector3(0, -40, 50);
     _this.cameraLookAt = new THREE.Vector3(0, 0, 1);
+    _this.lightPosition1 = new THREE.Vector3(100, 100, 100);
+    _this.lightPosition2 = new THREE.Vector3(50, -100, 70);
+    _this.lightTarget = new THREE.Vector3(0, 0, 1);
+    _this.state = {
+      rotate: true,
+      cameraPosition: new THREE.Vector3(0, -40, 50)
+    };
     return _this;
   }
 
@@ -87,27 +112,71 @@ var Simple = function (_React$Component) {
       var width = window.innerWidth; // canvas width
       var height = window.innerHeight; // canvas height
       return React.createElement(
-        React3,
-        {
-          mainCamera: 'camera' // this points to the perspectiveCamera which has the name set to "camera" below
-          , width: width,
-          height: height,
-          clearColor: 0xf0f0f0
-        },
+        'div',
+        { 'class': 'wrapper' },
+        React.createElement(Info, {
+          toggleRotate: this._toggleRotate,
+          rotating: this.state.rotate
+        }),
         React.createElement(
-          'scene',
-          null,
-          React.createElement('perspectiveCamera', {
-            name: 'camera',
-            fov: 45,
-            aspect: width / height,
-            near: 1,
-            far: 2000,
+          React3,
+          {
+            mainCamera: 'camera' // this points to the perspectiveCamera which has the name set to "camera" below
+            , width: width,
+            height: height,
+            clearColor: 0xf0f0f0,
+            onAnimate: this._onAnimate
+          },
+          React.createElement(
+            'scene',
+            null,
+            React.createElement('ambientLight', {
+              color: 0x505050
+            }),
+            React.createElement('spotLight', {
+              color: 0xdddddd,
+              intensity: 1.5,
+              position: this.lightPosition1,
+              lookAt: this.lightTarget,
 
-            position: this.cameraPosition,
-            lookAt: this.cameraLookAt
-          }),
-          React.createElement('group', { ref: 'group' })
+              castShadow: true,
+              shadowCameraNear: 200,
+              shadowCameraFar: 10000,
+              shadowCameraFov: 50,
+
+              shadowBias: -0.00022,
+
+              shadowMapWidth: 2048,
+              shadowMapHeight: 2048
+            }),
+            React.createElement('spotLight', {
+              color: 0xdddddd,
+              intensity: 1.5,
+              position: this.lightPosition2,
+              lookAt: this.lightTarget,
+
+              castShadow: true,
+              shadowCameraNear: 200,
+              shadowCameraFar: 10000,
+              shadowCameraFov: 50,
+
+              shadowBias: -0.00022,
+
+              shadowMapWidth: 2048,
+              shadowMapHeight: 2048
+            }),
+            React.createElement('perspectiveCamera', {
+              name: 'camera',
+              fov: 45,
+              aspect: width / height,
+              near: 1,
+              far: 2000,
+
+              position: this.state.cameraPosition,
+              lookAt: this.state.rotate ? this.cameraLookAt : null
+            }),
+            React.createElement('group', { ref: 'group' })
+          )
         )
       );
     }
@@ -115,6 +184,66 @@ var Simple = function (_React$Component) {
 
   return Simple;
 }(React.Component);
+
+var PropTypes = React.PropTypes;
+
+var Info = function (_React$Component2) {
+  _inherits(Info, _React$Component2);
+
+  function Info() {
+    _classCallCheck(this, Info);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Info).apply(this, arguments));
+  }
+
+  _createClass(Info, [{
+    key: 'render',
+    value: function render() {
+      var linkStyle = {
+        textDecoration: 'underline',
+        cursor: 'pointer'
+      };
+
+      var _props = this.props;
+      var toggleRotate = _props.toggleRotate;
+      var rotating = _props.rotating;
+
+
+      return React.createElement(
+        'div',
+        {
+          style: {
+            textAlign: 'center',
+            padding: 10,
+            zIndex: 10,
+            width: '100%',
+            position: 'absolute',
+            color: '#000'
+          }
+        },
+        '3dcraft Demo',
+        React.createElement('br', null),
+        'Model loaded from STL file.',
+        React.createElement('br', null),
+        'Toggle: ',
+        React.createElement(
+          'a',
+          { onClick: toggleRotate, style: linkStyle },
+          'Camera',
+          rotating ? '*' : null
+        ),
+        ' |',
+        React.createElement('br', null)
+      );
+    }
+  }]);
+
+  return Info;
+}(React.Component);
+
+Info.propTypes = {
+  rotating: PropTypes.bool.isRequired
+};
 
 },{"./STLLoader":2,"react":undefined,"react-dom":undefined,"react-three-renderer":undefined,"three":undefined}],2:[function(require,module,exports){
 'use strict';
